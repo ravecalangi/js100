@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+
+    <div class="js-container"></div>
+
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/dayjs.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script type="text/babel">
+
+        function App() {
+
+            const [ tasks, setTask ] = React.useState([]);
+
+            const [textValue, setTextValue] = React.useState("");
+
+            const [indexEdit, setIndexEdit] = React.useState(null);
+
+            return(
+                <>
+                    <TaskInput 
+                        tasks={tasks}
+                        setTask={setTask}
+                        textValue={textValue} 
+                        setTextValue={setTextValue}
+                        indexEdit={indexEdit}
+                        setIndexEdit={setIndexEdit}
+                    />
+
+                    <TaskStorage 
+                        tasks={tasks} 
+                        setTask={setTask}
+                        textValue={textValue}
+                        setTextValue={setTextValue}
+                        indexEdit={indexEdit}
+                        setIndexEdit={setIndexEdit}
+                    />
+                </>
+            );
+
+        }
+
+        function TaskInput({ tasks, setTask, textValue, setTextValue, indexEdit, setIndexEdit }) {
+
+            function addTask() {
+
+                if(textValue.trim() === "") return;
+
+                if(indexEdit !== null) {
+
+                    const editedTask = tasks.map((task, index) => {
+                         return indexEdit !== index ? task : {
+                            description: textValue,
+                            active: task.active
+                         }
+                    });
+
+                    setTask(editedTask);
+
+                } else {
+
+                    setTask([
+                        ...tasks, {
+                            description: textValue,
+                            active: tasks.active
+                        }
+                    ]);
+
+                }
+                    
+                setTextValue('');
+                setIndexEdit(null);
+            }
+
+            function saveTextInput(event) {
+                setTextValue(event.target.value);
+            }
+
+            return(
+                <>
+                    
+                    <h1>Task Manager</h1>
+                    Task:
+
+                    <input 
+                        value={textValue} 
+                        onChange={saveTextInput} 
+                        placeholder="Add your task here" 
+                        type="text"
+                     />
+                    
+                    <button onClick={addTask} >{indexEdit !== null ? 'Edit' : 'Add'}</button>
+                    
+                </>
+            );
+
+        }
+
+        function TaskStorage({ tasks, setTask, textValue, setTextValue, indexEdit, setIndexEdit }) {
+
+            function toggleTask(index) {
+                const updatedTasks = [...tasks];
+
+                updatedTasks[index].active = !updatedTasks[index].active;
+
+                setTask(updatedTasks);
+            }
+
+            function editTask(indexToEdit) {
+                setTextValue(tasks[indexToEdit].description);
+                
+                setIndexEdit(indexToEdit);
+            }
+
+            function deleteTask(indexToEdit) {
+                const filteredTask = tasks.filter((task, index) => {
+                    return index !== indexToEdit;
+                }); 
+
+                setTask(filteredTask);
+            }
+            
+            return(
+                <>
+                    {
+                        tasks.map((task, index) => {
+                            return(
+                                <div>
+                                    <input 
+                                    type="checkbox" 
+                                    checked={task.active}
+                                    onChange={() => toggleTask(index)}
+                                    />
+
+                                    {task.active ? <del>{task.description} </del>
+                                    :
+                                    <span>{task.description}</span>
+                                    }
+
+                                    <button onClick={() => editTask(index)} >Edit</button>
+                                    <button onClick={() => deleteTask(index)} >Delete</button>
+                                </div>
+                            );
+                        }) 
+                    }
+                </>
+            );
+
+        }
+        
+        const container = document.querySelector('.js-container');
+        ReactDOM.createRoot(container).render(<App />);
+
+    </script>
+  </body>
+</html>

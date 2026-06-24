@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+
+    <div class="js-container"></div>
+
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/dayjs.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script type="text/babel">
+        
+        function App() {
+
+          const [todos, setTodo] = React.useState([
+            "banana",
+            "apple",
+            "orange"
+          ]);
+
+          const [inputValue, setInputValue] = React.useState('');
+
+          const [editIndex, setEditIndex] = React.useState(null);
+
+          return(
+            <>
+              <ChatInput todos={todos} setTodo={setTodo} inputValue={inputValue} setInputValue={setInputValue} editIndex={editIndex} setEditIndex={setEditIndex} />
+              <ChatList todos={todos} setTodo={setTodo} inputValue={inputValue} setInputValue={setInputValue} editIndex={editIndex} setEditIndex={setEditIndex} />
+            </>
+          );
+
+        }
+
+        function ChatList({ todos, setTodo, inputValue, setInputValue, editIndex, setEditIndex }) {
+
+          function editTodo(indexToEdit) {
+            setInputValue(todos[indexToEdit]); // set inputValue based on index
+            setEditIndex(indexToEdit);
+          }
+
+          function removeTodo(indexToRemove) {
+            setTodo(
+              todos.filter((todo, index) => {
+                return index !== indexToRemove;
+              })
+            );
+          }
+
+          return(
+            <>
+              {todos.map((todo, index) => {
+                return <div>
+                  
+                  {todo} 
+                  
+                  <button onClick={() => editTodo(index)} >Edit</button>
+                  <button onClick={() => removeTodo(index)} >Delete</button>
+                  
+                  </div>
+              })}
+              
+            </>
+          );
+
+        }
+
+        function ChatInput({ todos, setTodo, inputValue, setInputValue, editIndex, setEditIndex }) {
+
+          function saveInput(event) {
+            setInputValue(event.target.value);
+          }
+
+          function addTodo() {
+
+            if(!inputValue) {
+              return;
+            }
+
+            if (editIndex !== null) {
+
+              const updatedTodos = todos.map((todo, index) => 
+                index === editIndex ? inputValue : todo
+              );
+
+              setTodo(updatedTodos);
+
+              setEditIndex(null);
+
+
+            } else {
+
+              setTodo([...todos, inputValue]);
+              
+
+            }
+
+            setInputValue('');
+            
+          }
+
+          return(
+            <>
+
+              <h1>Todo List</h1>
+
+              <input 
+                value={inputValue}
+                onChange={saveInput}
+                type="text" 
+                placeholder="Enter a Task" 
+              />
+
+              <button onClick={addTodo} >
+                {editIndex !== null ? 'Edit' : 'Add'}
+                
+              </button>
+
+            </>
+          );
+
+        }
+         
+
+        const container = document.querySelector('.js-container');
+        ReactDOM.createRoot(container).render(<App />);
+
+    </script>
+  </body>
+</html>
