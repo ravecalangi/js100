@@ -28,7 +28,11 @@ A collection of JavaScript snippets and mini projects for 100 days
 - ✅ Day 23 – Swiper Image Carousel
 - ✅ Day 24 – The Book Stack
 - ✅ Day 25 – To-Do List
-- ⏳ Day 26 – In Progress
+- ✅ Day 26 – Expense Tracker
+- ✅ Day 27 – Task Manager
+- ✅ Day 28 – Timer
+- ✅ Day 29 – To-Do List React
+- ⏳ Day 30 – In Progress
 
 
 
