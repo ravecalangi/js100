@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+
+    <div class="js-container"></div>
+
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/dayjs.js"></script>
+
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script type="text/babel">
+
+
+        function App() {
+
+            const [expenses, setExpense] = React.useState([
+                {
+                    description: "Jollibee",
+                    amount: 150
+                },
+                {
+                    description: "Pamasahe",
+                    amount: 30
+                },
+                {
+                    description: "Load",
+                    amount: 50
+                }
+            ]);
+
+            const [descriptionValue, setDescriptionValue] = React.useState("");
+
+            const [amountValue, setAmountValue] = React.useState("");
+
+            const [editIndex, setEditIndex] = React.useState(null);
+
+            function deleteExpense(indexToDelete) {
+                setExpense(
+                    expenses.filter((expense, index) => {
+                        return index !== indexToDelete;
+                    })
+                );
+            }
+
+            function editExpense(indexToEdit) {
+                setDescriptionValue(expenses[indexToEdit].description);
+                setAmountValue(expenses[indexToEdit].amount);
+
+                setEditIndex(indexToEdit);
+            }
+
+            return(
+                <>
+                    <InputSection 
+                        expenses={expenses} 
+                        setExpense={setExpense} 
+                        descriptionValue={descriptionValue} setDescriptionValue={setDescriptionValue} amountValue={amountValue} 
+                        setAmountValue={setAmountValue}
+                        editIndex={editIndex} 
+                        setEditIndex={setEditIndex}
+                    />
+
+                    <ExpenseSection 
+                        expenses={expenses} 
+                        setExpense={setExpense} 
+                        deleteExpense={deleteExpense} 
+                        editExpense={editExpense}
+                    />
+                </>
+            );  
+
+        }
+
+        function InputSection({ expenses, setExpense, descriptionValue, setDescriptionValue, amountValue, setAmountValue, editIndex, setEditIndex }) {
+            
+            function addExpense() {
+
+                if (!descriptionValue.trim() || !amountValue.trim()) {
+                    return;
+                }
+
+                if(editIndex !== null) {
+                    
+                    const updatedExpenses = expenses.map((expense, index) => {
+                    return index === editIndex 
+                        ? {
+                            description: descriptionValue,
+                            amount: amountValue
+                           } 
+                        : expense;
+                    });
+
+                    setExpense(updatedExpenses);
+
+                } else {
+                    
+                    setExpense([...expenses, 
+                        {
+                            description: descriptionValue,
+                            amount: amountValue
+                        }
+                    ]);
+                    
+                }
+
+                setDescriptionValue('');
+                setAmountValue('');
+
+            }
+
+            function getDescriptionText(event) {
+                setDescriptionValue(event.target.value);
+            }
+
+            function getAmountText(event) {
+                setAmountValue(event.target.value);
+            }
+
+            return(
+                <>
+                    <h1>Expense Tracker</h1>
+                    <span>Description</span>
+                    <input value={descriptionValue} onChange={getDescriptionText} type="text" />
+                    <br />
+                    <span>Amount</span>
+                    <input value={amountValue} onChange={getAmountText} type="text" />
+                    <div>
+                        <button onClick={addExpense} > {editIndex !== null ? "Edit Expense" : "Add Expense"}</button>
+                    </div>
+                    <br />
+                </>
+            );
+
+        }
+
+        function ExpenseSection({ expenses, setExpense, deleteExpense, editExpense }) {
+
+            return(
+                <>
+                    {expenses.map((expense, index) => {
+                        return(
+                            <>
+                                <div>{expense.description} {expense.amount}</div>
+                                <button onClick={() => editExpense(index)} >Edit</button>
+                                <button onClick={() => deleteExpense(index)}  >Delete</button>
+                            </>
+                        );
+                    })}
+                </>
+            );
+
+        }
+
+        const container = document.querySelector('.js-container');
+        ReactDOM.createRoot(container).render(<App />);
+
+    </script>
+  </body>
+</html>
